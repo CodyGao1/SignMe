@@ -30,37 +30,39 @@ const App = () => {
   const modelName = "ASL";
   const threshold = 0.50;
 
-  const detectFrame = async (model) => {
-    const model_dim = [512, 512];
-    tf.engine().startScope();
-    const input = tf.tidy(() => {
-      const img = tf.image
-                  .resizeBilinear(tf.browser.fromPixels(videoRef.current), model_dim)
-                  .div(255.0)
-                  .transpose([2, 0, 1])
-                  .expandDims(0);
-      return img;
-    });
+const detectFrame = async (model) => {
+  const model_dim = [512, 512];
+  tf.engine().startScope();
+  const input = tf.tidy(() => {
+    const img = tf.image
+                .resizeBilinear(tf.browser.fromPixels(videoRef.current), model_dim)
+                .div(255.0)
+                .transpose([2, 0, 1])
+                .expandDims(0);
+    return img;
+  });
 
-    await model.executeAsync(input).then((res) => {
-      res = res.arraySync()[0];
+  // Using model.execute() instead of model.executeAsync()
+  const res = model.execute(input);
+  const predictions = res.arraySync();
 
-      var detections = non_max_suppression(res);
-      const boxes =  shortenedCol(detections, [0,1,2,3]);
-      const scores = shortenedCol(detections, [4]);
-      const class_detect = shortenedCol(detections, [5]);
+  var detections = non_max_suppression(predictions[0]);
+  const boxes =  shortenedCol(detections, [0,1,2,3]);
+  const scores = shortenedCol(detections, [4]);
+  const class_detect = shortenedCol(detections, [5]);
 
-      if (class_detect.length > 0) {
-        setLatestDetection(class_detect[0]); // Assuming we want the first detected class
-      }
+  if (class_detect.length > 0) {
+    setLatestDetection(class_detect[0]); // Assuming we want the first detected class
+  }
 
-      renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
-      tf.dispose(res);
-    });
+  renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
+  tf.dispose(res);
+  tf.dispose(input);
 
-    requestAnimationFrame(() => detectFrame(model));
-    tf.engine().endScope();
-  };
+  requestAnimationFrame(() => detectFrame(model));
+  tf.engine().endScope();
+};
+
 
   useEffect(() => {
     const interval = setInterval(() => {
