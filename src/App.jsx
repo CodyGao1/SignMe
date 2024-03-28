@@ -63,7 +63,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    tf.loadGraphModel(`${window.location.origin}/${modelName}_web_model/model.json`, {
+    tf.loadGraphModel(`${window.location.origin}/${modelName}web_model/model.json`, {
       onProgress: (fractions) => {
         setLoading({ loading: true, progress: fractions });
       },
