@@ -19,7 +19,7 @@ const App = () => {
   const canvasRef = useRef(null);
   const webcam = new Webcam();
   const modelName = "ASL";
-  const threshold = 0.50;
+  const threshold = 0.85;
 
   const detectFrame = async (model) => {
     const model_dim = [512, 512];
