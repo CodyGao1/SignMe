@@ -22,16 +22,13 @@ function shortenedCol(arrayofarray, indexlist) {
 
 const App = () => {
   const [loading, setLoading] = useState({ loading: true, progress: 0 });
+  const [classHistory, setClassHistory] = useState([]);
+  const [latestDetection, setLatestDetection] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const webcam = new Webcam();
-  // configs
   const modelName = "ASL";
   const threshold = 0.50;
-  /**
-   * Function to detect every frame loaded from webcam in video tag.
-   * @param {tf.GraphModel} model loaded YOLOv7 tensorflow.js model
-   */
 
   const detectFrame = async (model) => {
     const model_dim = [512, 512];
@@ -42,11 +39,10 @@ const App = () => {
                   .div(255.0)
                   .transpose([2, 0, 1])
                   .expandDims(0);
-      return img
+      return img;
     });
 
     await model.executeAsync(input).then((res) => {
-
       res = res.arraySync()[0];
 
       var detections = non_max_suppression(res);
@@ -54,13 +50,27 @@ const App = () => {
       const scores = shortenedCol(detections, [4]);
       const class_detect = shortenedCol(detections, [5]);
 
+      if (class_detect.length > 0) {
+        setLatestDetection(class_detect[0]); // Assuming we want the first detected class
+      }
+
       renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
       tf.dispose(res);
     });
 
-    requestAnimationFrame(() => detectFrame(model)); // get another frame
+    requestAnimationFrame(() => detectFrame(model));
     tf.engine().endScope();
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (latestDetection) {
+        setClassHistory(currentHistory => [...currentHistory, latestDetection]);
+      }
+    }, 2000); // Update history every 2 seconds
+
+    return () => clearInterval(interval);
+  }, [latestDetection]);
 
   useEffect(() => {
     tf.loadGraphModel(`${window.location.origin}/${modelName}_web_model/model.json`, {
@@ -68,7 +78,6 @@ const App = () => {
         setLoading({ loading: true, progress: fractions });
       },
     }).then(async (yolov7) => {
-      // Warmup the model before using real data.
       const dummyInput = tf.ones(yolov7.inputs[0].shape);
       await yolov7.executeAsync(dummyInput).then((warmupResult) => {
         tf.dispose(warmupResult);
@@ -79,7 +88,11 @@ const App = () => {
       });
     });
   }, []);
-  console.warn = () => {};
+
+  // Optionally, log the class history for debugging
+  useEffect(() => {
+    console.log(classHistory);
+  }, [classHistory]);
 
   return (
     <div className="App">
@@ -91,8 +104,7 @@ const App = () => {
       )}
 
       <div className="content">
-        <video autoPlay playsInline muted ref={videoRef} id="frame"
-        />
+        <video autoPlay playsInline muted ref={videoRef} id="frame" />
         <canvas width={512} height={512} ref={canvasRef} />
       </div>
     </div>
