@@ -1,23 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as tf from "@tensorflow/tfjs";
-import "@tensorflow/tfjs-backend-webgl"; // set backend to webgl
+import "@tensorflow/tfjs-backend-webgl";
 import Loader from "./components/loader";
 import { Webcam } from "./utils/webcam";
 import { renderBoxes } from "./utils/renderBox";
 import { non_max_suppression } from "./utils/nonMaxSuppression";
 import "./style/App.css";
 
-/**
- * Function to detect image.
- * @param {HTMLCanvasElement} canvasRef canvas reference
- */
-
 function shortenedCol(arrayofarray, indexlist) {
-  return arrayofarray.map(function (array) {
-      return indexlist.map(function (idx) {
-          return array[idx];
-      });
-  });
+  return arrayofarray.map(array => indexlist.map(idx => array[idx]));
 }
 
 const App = () => {
@@ -30,44 +21,44 @@ const App = () => {
   const modelName = "ASL";
   const threshold = 0.50;
 
-const detectFrame = async (model) => {
-  const model_dim = [512, 512];
-  tf.engine().startScope();
-  const input = tf.tidy(() => {
-    const img = tf.image
+  const detectFrame = async (model) => {
+    const model_dim = [512, 512];
+    tf.engine().startScope();
+    const input = tf.tidy(() => {
+      const img = tf.image
                 .resizeBilinear(tf.browser.fromPixels(videoRef.current), model_dim)
                 .div(255.0)
                 .transpose([2, 0, 1])
                 .expandDims(0);
-    return img;
-  });
+      return img;
+    });
 
-  // Using model.execute() instead of model.executeAsync()
-  const res = model.execute(input);
-  const predictions = res.arraySync();
+    const res = model.execute(input);
+    const predictions = res.arraySync();
 
-  var detections = non_max_suppression(predictions[0]);
-  const boxes =  shortenedCol(detections, [0,1,2,3]);
-  const scores = shortenedCol(detections, [4]);
-  const class_detect = shortenedCol(detections, [5]);
+    var detections = non_max_suppression(predictions[0]);
+    const boxes = shortenedCol(detections, [0,1,2,3]);
+    const scores = shortenedCol(detections, [4]);
+    const class_detect = shortenedCol(detections, [5]);
 
-  if (class_detect.length > 0) {
-    setLatestDetection(class_detect[0]); // Assuming we want the first detected class
-  }
+    if (class_detect.length > 0 && class_detect[0] !== 25) { // Check for non-blank detection
+      setLatestDetection(class_detect[0]);
+    }
 
-  renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
-  tf.dispose(res);
-  tf.dispose(input);
+    renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
+    tf.dispose(res);
+    tf.dispose(input);
 
-  requestAnimationFrame(() => detectFrame(model));
-  tf.engine().endScope();
-};
-
+    requestAnimationFrame(() => detectFrame(model));
+    tf.engine().endScope();
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (latestDetection) {
+      if (latestDetection !== null) {
         setClassHistory(currentHistory => [...currentHistory, latestDetection]);
+        console.log(classHistory);
+        setLatestDetection(null); // Reset latest detection
       }
     }, 2000); // Update history every 2 seconds
 
@@ -90,11 +81,6 @@ const detectFrame = async (model) => {
       });
     });
   }, []);
-
-  // Optionally, log the class history for debugging
-  useEffect(() => {
-    console.log(classHistory);
-  }, [classHistory]);
 
   return (
     <div className="App">
