@@ -27,7 +27,7 @@ const App = () => {
   const webcam = new Webcam();
   // configs
   const modelName = "ASL";
-  const threshold = 0.80;
+  const threshold = 0.50;
   /**
    * Function to detect every frame loaded from webcam in video tag.
    * @param {tf.GraphModel} model loaded YOLOv7 tensorflow.js model
