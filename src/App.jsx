@@ -34,7 +34,7 @@ const App = () => {
    */
 
   const detectFrame = async (model) => {
-    const model_dim = [640, 640];
+    const model_dim = [512, 512];
     tf.engine().startScope();
     const input = tf.tidy(() => {
       const img = tf.image
@@ -93,7 +93,7 @@ const App = () => {
       <div className="content">
         <video autoPlay playsInline muted ref={videoRef} id="frame"
         />
-        <canvas width={640} height={640} ref={canvasRef} />
+        <canvas width={512} height={512} ref={canvasRef} />
       </div>
     </div>
   );
