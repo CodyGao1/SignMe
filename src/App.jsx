@@ -41,8 +41,8 @@ const App = () => {
     const scores = shortenedCol(detections, [4]);
     const class_detect = shortenedCol(detections, [5]);
 
-    if (class_detect.length > 0) {
-      latestDetectionRef.current = class_detect[0]; // Temporarily store the latest detection
+    if (class_detect.length > 0 && class_detect[0][0] !== 25) {
+        latestDetectionRef.current = class_detect[0][0]; // Access the actual value, not the array
     }
 
     renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
@@ -55,11 +55,10 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Check if the latest detection is not 'blank' before adding it to the history
-      if (latestDetectionRef.current !== null && latestDetectionRef.current !== 25) {
-        setClassHistory(currentHistory => [...currentHistory, latestDetectionRef.current]);
-        latestDetectionRef.current = null; // Reset after updating history
-      }
+        if (latestDetectionRef.current !== null) {
+            setClassHistory(currentHistory => [...currentHistory, latestDetectionRef.current]);
+            latestDetectionRef.current = null; // Reset after updating history
+        }
     }, 2000); // Update history every 2 seconds
 
     return () => clearInterval(interval);
@@ -83,7 +82,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (classHistory.length > 0) {
+    if (classHistory.length > 0 && classHistory[classHistory.length - 1] !== 25) {
       console.log(classHistory);
     }
   }, [classHistory]);
