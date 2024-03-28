@@ -41,7 +41,7 @@ const App = () => {
     const scores = shortenedCol(detections, [4]);
     const class_detect = shortenedCol(detections, [5]);
 
-    if (class_detect.length > 0 && class_detect[0] !== 25) { // Assuming first class is the desired detection
+    if (class_detect.length > 0 && class_detect[0] !== 25) { // Check for non-'blank' detection
       latestDetectionRef.current = class_detect[0]; // Update ref to the latest detection
     }
 
@@ -82,8 +82,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Log classHistory every time it updates
-    if (classHistory.length > 0) {
+    // Log classHistory every time it updates, excluding 'blank' detections
+    if (classHistory.length > 0 && classHistory[classHistory.length - 1] !== 25) {
       console.log(classHistory);
     }
   }, [classHistory]);
