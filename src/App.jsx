@@ -14,7 +14,7 @@ function shortenedCol(arrayofarray, indexlist) {
 const App = () => {
   const [loading, setLoading] = useState({ loading: true, progress: 0 });
   const [classHistory, setClassHistory] = useState([]);
-  const [latestDetection, setLatestDetection] = useState(null);
+  const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const webcam = new Webcam();
@@ -41,8 +41,8 @@ const App = () => {
     const scores = shortenedCol(detections, [4]);
     const class_detect = shortenedCol(detections, [5]);
 
-    if (class_detect.length > 0 && class_detect[0] !== 25) { // Check for non-blank detection
-      setLatestDetection(class_detect[0]);
+    if (class_detect.length > 0 && class_detect[0] !== 25) { // Assuming first class is the desired detection
+      latestDetectionRef.current = class_detect[0]; // Update ref to the latest detection
     }
 
     renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
@@ -55,15 +55,14 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (latestDetection !== null) {
-        setClassHistory(currentHistory => [...currentHistory, latestDetection]);
-        console.log(classHistory);
-        setLatestDetection(null); // Reset latest detection
+      if (latestDetectionRef.current !== null) {
+        setClassHistory(currentHistory => [...currentHistory, latestDetectionRef.current]);
+        latestDetectionRef.current = null; // Reset after updating history
       }
     }, 2000); // Update history every 2 seconds
 
     return () => clearInterval(interval);
-  }, [latestDetection]);
+  }, []);
 
   useEffect(() => {
     tf.loadGraphModel(`${window.location.origin}/${modelName}_web_model/model.json`, {
@@ -81,6 +80,13 @@ const App = () => {
       });
     });
   }, []);
+
+  useEffect(() => {
+    // Log classHistory every time it updates
+    if (classHistory.length > 0) {
+      console.log(classHistory);
+    }
+  }, [classHistory]);
 
   return (
     <div className="App">
