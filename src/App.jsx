@@ -11,9 +11,15 @@ function shortenedCol(arrayofarray, indexlist) {
   return arrayofarray.map(array => indexlist.map(idx => array[idx]));
 }
 
+function mapIdToLetter(id) {
+  if (id === 25) return ' '; // Map 25 to a blank space
+  return String.fromCharCode(65 + id); // Map 0-24 to A-Y
+}
+
 const App = () => {
   const [loading, setLoading] = useState({ loading: true, progress: 0 });
   const [classHistory, setClassHistory] = useState([]);
+  const [outputText, setOutputText] = useState('');
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -41,8 +47,8 @@ const App = () => {
     const scores = shortenedCol(detections, [4]);
     const class_detect = shortenedCol(detections, [5]);
 
-    if (class_detect.length > 0 && class_detect[0][0] !== 25) {
-        latestDetectionRef.current = class_detect[0][0]; // Access the actual value, not the array
+    if (class_detect.length > 0) {
+        latestDetectionRef.current = class_detect[0][0];
     }
 
     renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
@@ -55,37 +61,20 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-        if (latestDetectionRef.current !== null) {
+        if (latestDetectionRef.current !== null && latestDetectionRef.current !== 25) {
             setClassHistory(currentHistory => [...currentHistory, latestDetectionRef.current]);
-            latestDetectionRef.current = null; // Reset after updating history
+            setOutputText(currentText => currentText + mapIdToLetter(latestDetectionRef.current));
+            latestDetectionRef.current = null;
         }
-    }, 2000); // Update history every 2 seconds
+    }, 2000); // Update history and output text every 2 seconds
 
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    tf.loadGraphModel(`${window.location.origin}/${modelName}_web_model/model.json`, {
-      onProgress: (fractions) => {
-        setLoading({ loading: true, progress: fractions });
-      },
-    }).then(async (yolov7) => {
-      const dummyInput = tf.ones(yolov7.inputs[0].shape);
-      await yolov7.executeAsync(dummyInput).then((warmupResult) => {
-        tf.dispose(warmupResult);
-        tf.dispose(dummyInput);
-
-        setLoading({ loading: false, progress: 1 });
-        webcam.open(videoRef, () => detectFrame(yolov7));
-      });
-    });
-  }, []);
-
-  useEffect(() => {
-    if (classHistory.length > 0 && classHistory[classHistory.length - 1] !== 25) {
-      console.log(classHistory);
-    }
-  }, [classHistory]);
+  const clearOutput = () => {
+    setOutputText('');
+    setClassHistory([]);
+  };
 
   return (
     <div className="App">
@@ -100,6 +89,12 @@ const App = () => {
         <video autoPlay playsInline muted ref={videoRef} id="frame" />
         <canvas width={512} height={512} ref={canvasRef} />
       </div>
+      
+      <div className="output-area" style={{ background: 'transparent', color: 'black', fontSize: '24px', whiteSpace: 'pre-wrap' }}>
+        {outputText}
+      </div>
+      
+      <button onClick={clearOutput}>Clear</button>
     </div>
   );
 };
