@@ -76,26 +76,27 @@ const App = () => {
     setClassHistory([]);
   };
 
- return (
+return (
   <div className="App">
-    <h2>SignMe</h2>
+    <h2>Object Detection Using YOLOv7 & Tensorflow.js</h2>
     {loading.loading ? (
       <Loader>Loading model... {(loading.progress * 100).toFixed(2)}%</Loader>
     ) : (
-      <p> </p>
+      <>
+        <div className="content">
+          <video autoPlay playsInline muted ref={videoRef} id="frame" />
+          <canvas width={512} height={512} ref={canvasRef} />
+        </div>
+        
+        <div className="output-area">
+          {outputText}
+        </div>
+        
+        <button onClick={clearOutput} className="clear-button">Clear</button>
+      </>
     )}
-
-    <div className="content">
-      <video autoPlay playsInline muted ref={videoRef} id="frame" />
-      <canvas width={512} height={512} ref={canvasRef} />
-    </div>
-    
-    <div className="output-area">
-      {outputText}
-    </div>
-    
-    <button onClick={clearOutput} className="clear-button">Clear</button>
   </div>
 );
+
 
 export default App;
