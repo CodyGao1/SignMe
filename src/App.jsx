@@ -83,7 +83,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <h2>Object Detection Using YOLOv7 & Tensorflow.js</h2>
+      <h2>SignMe</h2>
       {loading ? (
         <div>
           <Loader />
