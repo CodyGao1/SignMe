@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&display=swap');
+
 .App {
   height: 100vh;
   padding: 0 10px;
@@ -20,9 +22,8 @@
   height: 100%;
   max-width: 512px;
   max-height: 512px;
-  border: 2px solid white;
-  padding: 10px;
-  margin-bottom: 20px;
+  border: 3px solid white;
+  padding: 0px;
 }
 
 .content > canvas {
@@ -36,7 +37,7 @@
 h2,
 p {
   font-size: 32px;
-  font-family: 'Arial', sans-serif;
+  font-family: 'EB Garamond', serif;
   margin-bottom: 20px;
 }
 
