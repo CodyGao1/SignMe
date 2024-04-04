@@ -110,7 +110,7 @@ const App = () => {
               onChange={(e) => setUpdateInterval(Number(e.target.value))} 
               className="slider" 
             />
-            <p>Update Interval: {updateInterval * 0.5} ms</p>
+            <p>Update Interval: {updateInterval * 0.5} seconds</p>
           </div>
 
           {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
