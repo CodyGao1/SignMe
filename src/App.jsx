@@ -16,20 +16,11 @@ function mapIdToLetter(id) {
   return String.fromCharCode(65 + id); // Map 0-24 to A-Y
 }
 
-function mostCommon(arr) {
-  const frequencyMap = {};
-  arr.forEach(item => {
-    frequencyMap[item] = (frequencyMap[item] || 0) + 1;
-  });
-
-  return Object.keys(frequencyMap).reduce((a, b) => frequencyMap[a] > frequencyMap[b] ? a : b);
-}
-
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
-  const [intervalDuration, setIntervalDuration] = useState(2000);
-  const [detectionBuffer, setDetectionBuffer] = useState([]);
+  const [updateInterval, setUpdateInterval] = useState(2000); // State for the slider
+  const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const webcam = new Webcam();
@@ -56,8 +47,8 @@ const App = () => {
     const scores = shortenedCol(detections, [4]);
     const class_detect = shortenedCol(detections, [5]);
 
-    if (class_detect.length > 0) {
-        setDetectionBuffer(currentBuffer => [...currentBuffer, class_detect[0][0]]);
+    if (class_detect.length > 0 && class_detect[0][0] !== 25) {
+        latestDetectionRef.current = class_detect[0][0]; // Access the actual value, not the array
     }
 
     renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
@@ -78,26 +69,27 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (detectionBuffer.length > 0) {
-        const mostCommonDetection = mostCommon(detectionBuffer);
-        const newLetter = mapIdToLetter(mostCommonDetection);
+      if (latestDetectionRef.current !== null) {
+        const newLetter = mapIdToLetter(latestDetectionRef.current);
         setOutputText(currentText => currentText + newLetter);
-        setDetectionBuffer([]);
+        latestDetectionRef.current = null;
       }
-    }, intervalDuration);
+    }, updateInterval);
     return () => clearInterval(interval);
-  }, [intervalDuration, detectionBuffer]);
+  }, [updateInterval]);
 
   const clearOutput = () => {
     setOutputText('');
-    setDetectionBuffer([]);
   };
 
   return (
     <div className="App">
       <h2>SignMe</h2>
       {loading ? (
-        <Loader>Loading model...</Loader>
+        <div>
+          <Loader />
+          <p>Loading model...</p>
+        </div>
       ) : (
         <>
           <div className="content">
@@ -108,20 +100,20 @@ const App = () => {
           <div className="output-area">
             {outputText}
           </div>
-
+          
           <div className="slider-container">
-            <input
-              type="range"
-              min="500"
-              max="5000"
-              value={intervalDuration}
-              onChange={(e) => setIntervalDuration(Number(e.target.value))}
-              className="slider"
+            <input 
+              type="range" 
+              min="500" 
+              max="5000" 
+              value={updateInterval} 
+              onChange={(e) => setUpdateInterval(Number(e.target.value))} 
+              className="slider" 
             />
-            <p>Interval: {intervalDuration} ms</p>
+            <p>Update Interval: {updateInterval} ms</p>
           </div>
 
-          <button onClick={clearOutput} className="clear-button">Clear</button>
+          {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
         </>
       )}
     </div>
