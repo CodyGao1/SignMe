@@ -15,6 +15,16 @@ function mapIdToLetter(id) {
   return id === 25 ? ' ' : String.fromCharCode(65 + id); // Map 0-24 to A-Y, 25 to ' '
 }
 
+function mostCommon(arr) {
+  // The most common detection calculation is simplified and improved
+  const frequencyMap = {};
+  arr.forEach((item) => {
+    frequencyMap[item] = (frequencyMap[item] || 0) + 1;
+  });
+  return Object.keys(frequencyMap).reduce((a, b) => frequencyMap[a] > frequencyMap[b] ? a : b);
+}
+
+
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
@@ -24,8 +34,7 @@ const App = () => {
   const webcam = new Webcam();
   const modelName = "ASL";
   const threshold = 0.85;
-  const frameRate = 30;
-  const detectionThreshold = frameRate * 2 * 0.5;
+  const detectionThreshold = 30;
 
   const detectFrame = async (model) => {
     const model_dim = [512, 512];
@@ -49,10 +58,7 @@ const App = () => {
 
     if (class_detect.length > 0) {
       const detectedClass = class_detect[0][0];
-      setDetectionFrequency((prevFrequency) => ({
-        ...prevFrequency,
-        [detectedClass]: (prevFrequency[detectedClass] || 0) + 1,
-      }));
+      setDetectionBuffer((prevBuffer) => [...prevBuffer, detectedClass]);
     }
 
     renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
@@ -73,16 +79,16 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const entries = Object.entries(detectionFrequency);
-      if (entries.length > 0) {
-        const sortedEntries = entries.sort((a, b) => b[1] - a[1]);
-        const [mostCommonClass, frequency] = sortedEntries[0];
-
-        if (frequency > detectionThreshold) {
-          const newLetter = mapIdToLetter(mostCommonClass);
-          setOutputText(currentText => currentText + newLetter);
+      if (detectionBuffer.length > 0) {
+        const mostCommonDetection = mostCommon(detectionBuffer);
+        if (mostCommonDetection !== undefined) {
+          const frequency = detectionBuffer.filter(x => x === mostCommonDetection).length;
+          if (frequency > detectionThreshold) {
+            const newLetter = mapIdToLetter(parseInt(mostCommonDetection, 10));
+            setOutputText(currentText => currentText + newLetter);
+          }
         }
-        setDetectionFrequency({});
+        setDetectionBuffer([]); // Clear the buffer after processing
       }
     }, 2000);
 
