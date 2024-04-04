@@ -104,13 +104,13 @@ const App = () => {
           <div className="slider-container">
             <input 
               type="range" 
-              min="500" 
-              max="5000" 
+              min="1" 
+              max="10" 
               value={updateInterval} 
               onChange={(e) => setUpdateInterval(Number(e.target.value))} 
               className="slider" 
             />
-            <p>Update Interval: {updateInterval} ms</p>
+            <p>Update Interval: {updateInterval * 0.5} ms</p>
           </div>
 
           {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
