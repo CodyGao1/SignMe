@@ -16,25 +16,42 @@ function mapIdToLetter(id) {
   return String.fromCharCode(65 + id); // Map 0-24 to A-Y
 }
 
+function mostCommon(arr) {
+  const frequencyMap = {};
+  let maxFreq = 0;
+  let mostCommonElement = null;
+
+  for (let item of arr) {
+    frequencyMap[item] = (frequencyMap[item] || 0) + 1;
+    if (frequencyMap[item] > maxFreq) {
+      maxFreq = frequencyMap[item];
+      mostCommonElement = item;
+    }
+  }
+
+  return mostCommonElement;
+}
+
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
-  const latestDetectionRef = useRef(null);
+  const [detectionBuffer, setDetectionBuffer] = useState([]);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const webcam = new Webcam();
   const modelName = "ASL";
   const threshold = 0.85;
+  const intervalDuration = 2000; // 2 seconds
 
   const detectFrame = async (model) => {
     const model_dim = [512, 512];
     tf.engine().startScope();
     const input = tf.tidy(() => {
-      const img = tf.image
-                .resizeBilinear(tf.browser.fromPixels(videoRef.current), model_dim)
-                .div(255.0)
-                .transpose([2, 0, 1])
-                .expandDims(0);
+      const img = tf.browser.fromPixels(videoRef.current)
+        .resizeBilinear([model_dim[0], model_dim[1]])
+        .div(tf.scalar(255))
+        .transpose([2, 0, 1])
+        .expandDims(0);
       return img;
     });
 
@@ -46,8 +63,9 @@ const App = () => {
     const scores = shortenedCol(detections, [4]);
     const class_detect = shortenedCol(detections, [5]);
 
-    if (class_detect.length > 0 && class_detect[0][0] !== 25) {
-        latestDetectionRef.current = class_detect[0][0]; // Access the actual value, not the array
+    if (class_detect.length > 0) {
+      const detectedClass = class_detect[0][0];
+      setDetectionBuffer(prevBuffer => [...prevBuffer, detectedClass]);
     }
 
     renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
@@ -68,27 +86,29 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (latestDetectionRef.current !== null) {
-        const newLetter = mapIdToLetter(latestDetectionRef.current);
-        setOutputText(currentText => currentText + newLetter);
-        latestDetectionRef.current = null;
+      if (detectionBuffer.length > 0) {
+        const mostCommonDetection = mostCommon(detectionBuffer);
+        if (mostCommonDetection !== null) {
+          const newLetter = mapIdToLetter(mostCommonDetection);
+          setOutputText(currentText => currentText + newLetter);
+        }
+        setDetectionBuffer([]); // Clear the buffer for the next interval
       }
-    }, 2000);
+    }, intervalDuration);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [detectionBuffer]);
 
   const clearOutput = () => {
     setOutputText('');
+    setDetectionBuffer([]);
   };
 
   return (
     <div className="App">
       <h2>SignMe</h2>
       {loading ? (
-        <div>
-          <Loader />
-          <p>Loading model...</p>
-        </div>
+        <Loader>Loading model...</Loader>
       ) : (
         <>
           <div className="content">
@@ -100,7 +120,9 @@ const App = () => {
             {outputText}
           </div>
           
-          {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
+          <button onClick={clearOutput} className="clear-button">
+            Clear
+          </button>
         </>
       )}
     </div>
@@ -108,4 +130,3 @@ const App = () => {
 };
 
 export default App;
-
