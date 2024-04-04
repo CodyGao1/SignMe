@@ -15,39 +15,24 @@ function mapIdToLetter(id) {
   return id === 25 ? ' ' : String.fromCharCode(65 + id); // Map 0-24 to A-Y, 25 to ' '
 }
 
-function mostCommon(arr) {
-  const frequencyMap = {};
-  let maxFreq = 0;
-  let mostCommonElement = arr[0];
-
-  for (let item of arr) {
-    frequencyMap[item] = (frequencyMap[item] || 0) + 1;
-    if (frequencyMap[item] > maxFreq) {
-      maxFreq = frequencyMap[item];
-      mostCommonElement = item;
-    }
-  }
-
-  return mostCommonElement;
-}
-
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
-  const [detectionBuffer, setDetectionBuffer] = useState([]);
-  const latestDetectionRef = useRef(null);
+  const [detectionFrequency, setDetectionFrequency] = useState({});
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const webcam = new Webcam();
   const modelName = "ASL";
   const threshold = 0.85;
+  const frameRate = 30;
+  const detectionThreshold = frameRate * 2 * 0.5;
 
   const detectFrame = async (model) => {
     const model_dim = [512, 512];
     tf.engine().startScope();
     const input = tf.tidy(() => {
       const img = tf.browser.fromPixels(videoRef.current)
-        .resizeBilinear(model_dim)
+        .resizeBilinear([model_dim[0], model_dim[1]])
         .div(tf.scalar(255))
         .transpose([2, 0, 1])
         .expandDims(0);
@@ -63,8 +48,11 @@ const App = () => {
     const class_detect = shortenedCol(detections, [5]);
 
     if (class_detect.length > 0) {
-      latestDetectionRef.current = class_detect[0][0];
-      setDetectionBuffer(prevBuffer => [...prevBuffer, latestDetectionRef.current]);
+      const detectedClass = class_detect[0][0];
+      setDetectionFrequency((prevFrequency) => ({
+        ...prevFrequency,
+        [detectedClass]: (prevFrequency[detectedClass] || 0) + 1,
+      }));
     }
 
     renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
@@ -85,29 +73,32 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (detectionBuffer.length > 0) {
-        const mostCommonDetection = mostCommon(detectionBuffer);
-        const newLetter = mapIdToLetter(mostCommonDetection);
-        setOutputText(currentText => currentText + newLetter);
-        setDetectionBuffer([]);
+      const entries = Object.entries(detectionFrequency);
+      if (entries.length > 0) {
+        const sortedEntries = entries.sort((a, b) => b[1] - a[1]);
+        const [mostCommonClass, frequency] = sortedEntries[0];
+
+        if (frequency > detectionThreshold) {
+          const newLetter = mapIdToLetter(mostCommonClass);
+          setOutputText(currentText => currentText + newLetter);
+        }
+        setDetectionFrequency({});
       }
     }, 2000);
+
     return () => clearInterval(interval);
-  }, [detectionBuffer]);
+  }, [detectionFrequency]);
 
   const clearOutput = () => {
     setOutputText('');
-    setDetectionBuffer([]);
+    setDetectionFrequency({});
   };
 
   return (
     <div className="App">
       <h2>SignMe</h2>
       {loading ? (
-        <div>
-          <Loader />
-          <p>Loading model...</p>
-        </div>
+        <Loader>Loading model...</Loader>
       ) : (
         <>
           <div className="content">
