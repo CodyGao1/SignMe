@@ -19,7 +19,7 @@ function mapIdToLetter(id) {
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
-  const [updateInterval, setUpdateInterval] = useState(2000); // State for the slider
+  const [updateInterval, setUpdateInterval] = useState(2); // State for the slider
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -74,7 +74,7 @@ const App = () => {
         setOutputText(currentText => currentText + newLetter);
         latestDetectionRef.current = null;
       }
-    }, updateInterval);
+    }, updateInterval * 500);
     return () => clearInterval(interval);
   }, [updateInterval]);
 
