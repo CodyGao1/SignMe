@@ -19,6 +19,7 @@ function mapIdToLetter(id) {
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
   const [updateInterval, setUpdateInterval] = useState(2); // State for the slider
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
@@ -82,6 +83,10 @@ const App = () => {
     setOutputText('');
   };
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <div className="App">
       <h2>SignMe</h2>
@@ -97,7 +102,10 @@ const App = () => {
             <canvas width={512} height={512} ref={canvasRef} />
           </div>
           
-          <div className="output-area">
+          <div 
+            className={`output-area ${isExpanded ? 'expanded' : ''}`} 
+            onClick={toggleExpand}
+          >
             {outputText}
           </div>
           
