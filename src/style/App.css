@@ -42,7 +42,7 @@ p {
 .output-area {
   background-color: transparent;
   color: black;
-  font-size: 64px;
+  font-size: 4em;
   white-space: pre-wrap;
   margin: 10px;
   padding: 10px;
