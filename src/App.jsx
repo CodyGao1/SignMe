@@ -20,7 +20,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [updateInterval, setUpdateInterval] = useState(2); // State for the slider
+  const [updateInterval, setUpdateInterval] = useState(4); // State for the slider
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
