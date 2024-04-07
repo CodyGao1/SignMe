@@ -22,7 +22,7 @@
   max-width: 512px;
   max-height: 512px;
   border: 5px solid white;
-  zoom: 250%;
+  zoom: 200%;
 }
 
 .content > canvas {
