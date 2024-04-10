@@ -19,7 +19,6 @@ function mapIdToLetter(id) {
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
-  const [isExpanded, setIsExpanded] = useState(false);
   const [updateInterval, setUpdateInterval] = useState(4); // State for the slider
   const [isAdding, setIsAdding] = useState(true); // State for adding values
   const [lettersList, setLettersList] = useState([]);
@@ -82,17 +81,20 @@ const App = () => {
     return () => clearInterval(interval);
   }, [updateInterval, isAdding]);
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+  const handleKeyDown = (event) => {
+    if (event.key === 's' || event.key === 'S') {
+      setIsAdding(true);
+    } else if (event.key === 'q' || event.key === 'Q') {
+      setIsAdding(false);
+    }
   };
 
-  const handleStartAdding = () => {
-    setIsAdding(true);
-  };
-
-  const handleStopAdding = () => {
-    setIsAdding(false);
-  };
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <div className="App">
@@ -110,20 +112,16 @@ const App = () => {
       </div>
       
       <div 
-        className={`output-area ${isExpanded ? 'expanded' : ''}`} 
-        onClick={toggleExpand}
+        className={`output-area ${isAdding ? '' : 'paused'}`} 
       >
         {outputText}
       </div>
       
       <div className="controls">
-        <button onClick={handleStopAdding} className="control-button">
+        <button onClick={() => setIsAdding(false)} className="control-button">
           Stop Adding (Q)
         </button>
-        <button onClick={clearOutput} className="control-button clear-button">
-          Clear (C)
-        </button>
-        <button onClick={handleStartAdding} className="control-button">
+        <button onClick={() => setIsAdding(true)} className="control-button">
           Start Adding (S)
         </button>
       </div>
