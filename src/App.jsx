@@ -6,6 +6,7 @@ import { Webcam } from "./utils/webcam";
 import { renderBoxes } from "./utils/renderBox";
 import { non_max_suppression } from "./utils/nonMaxSuppression";
 import "./style/App.css";
+import myImage from './SignMe_House_Of_Code_1.png';
 
 function shortenedCol(arrayofarray, indexlist) {
   return arrayofarray.map(array => indexlist.map(idx => array[idx]));
@@ -92,9 +93,9 @@ const App = () => {
   <br></br>
   <br></br>
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <img src="SignMe_House_Of_Code_1.png" alt="SignMe Logo" />
+    <img src={myImage} alt="SignMe Logo" />
     <h2>SignMe</h2>
-    <img src="SignMe_House_Of_Code_1.png" alt="SignMe Logo" />
+    <img src={myImage} alt="SignMe Logo" />
   </div>
   {loading ? (
     <div>
