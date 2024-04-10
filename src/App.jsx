@@ -84,6 +84,7 @@ const App = () => {
   const handleKeyDown = (event) => {
     if (event.key === 's' || event.key === 'S') {
       setIsAdding(true);
+      clearOutput();
     } else if (event.key === 'q' || event.key === 'Q') {
       setIsAdding(false);
     }
