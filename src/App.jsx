@@ -82,11 +82,6 @@ const App = () => {
     return () => clearInterval(interval);
   }, [updateInterval, isAdding]);
 
-  const clearOutput = () => {
-    setOutputText('');
-    setLettersList([]);
-  };
-
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -122,14 +117,14 @@ const App = () => {
       </div>
       
       <div className="controls">
-        <button onClick={handleStartAdding} className="control-button">
-          Start Adding (S)
-        </button>
         <button onClick={handleStopAdding} className="control-button">
           Stop Adding (Q)
         </button>
-        <button onClick={clearOutput} className="control-button">
+        <button onClick={clearOutput} className="control-button clear-button">
           Clear (C)
+        </button>
+        <button onClick={handleStartAdding} className="control-button">
+          Start Adding (S)
         </button>
       </div>
       
@@ -144,8 +139,6 @@ const App = () => {
         />
         <p>Update Interval: {updateInterval * 0.5} seconds</p>
       </div>
-
-      {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
     </>
   )}
 </div>
