@@ -22,6 +22,7 @@ const App = () => {
   const [updateInterval, setUpdateInterval] = useState(4); // State for the slider
   const [isAdding, setIsAdding] = useState(true); // State for adding values
   const [lettersList, setLettersList] = useState([]);
+  const [isExpanded, setIsExpanded] = useState(false); // State for expanded output area
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -101,9 +102,22 @@ const App = () => {
     setLettersList([]);
   };
 
-  const toggleExpand = () => {
-    setIsAdding(!isAdding);
+  const handleOutputAreaClick = () => {
+    setIsExpanded(!isExpanded);
   };
+
+  const handleDocumentClick = (event) => {
+    if (!event.target.closest(".output-area")) {
+      setIsExpanded(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleDocumentClick);
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, []);
 
   return (
     <div className="App">
@@ -122,7 +136,7 @@ const App = () => {
       
       <div 
         className={`output-area ${isAdding ? '' : 'expanded'}`} 
-        onClick={toggleExpand}
+        onClick={handleOutputAreaClick}
       >
         {outputText}
       </div>
