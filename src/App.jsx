@@ -93,7 +93,7 @@ const App = () => {
       <br></br>
       <br></br>
       <br></br>
-      <h2>SignMe</h2>
+      <h1>SignMe</h1>
       {loading ? (
         <div>
           <Loader />
@@ -103,7 +103,7 @@ const App = () => {
         <>
           <div className="content">
             <video autoPlay playsInline muted ref={videoRef} id="frame" />
-            <canvas width={512} height={512} ref={canvasRef} />
+            <canvas width={712} height={712} ref={canvasRef} />
           </div>
           
           <div 
