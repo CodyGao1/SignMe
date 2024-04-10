@@ -91,7 +91,9 @@ const App = () => {
     <div className="App">
       <br></br>
       <br></br>
-      <p id="SignMeLogo">SignMe</p>
+    <span> <img src="https://cdn.discordapp.com/attachments/979498287256178749/1227428320883249252/SignMe_House_Of_Code_1.png?ex=66285eb4&is=6615e9b4&hm=34316d87a08c21b37deb4397456346612ce133dc0be6c7febebbb41b515fe080&"> </img> </span> 
+    <p id="SignMeLogo">SignMe</p>
+    <span> <img src="https://cdn.discordapp.com/attachments/979498287256178749/1227428320883249252/SignMe_House_Of_Code_1.png?ex=66285eb4&is=6615e9b4&hm=34316d87a08c21b37deb4397456346612ce133dc0be6c7febebbb41b515fe080&"> </img> </span> 
       {loading ? (
         <div>
           <Loader />
