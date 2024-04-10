@@ -6,7 +6,6 @@ import { Webcam } from "./utils/webcam";
 import { renderBoxes } from "./utils/renderBox";
 import { non_max_suppression } from "./utils/nonMaxSuppression";
 import "./style/App.css";
-import myImage from './SignMe_House_Of_Code_2.png';
 
 function shortenedCol(arrayofarray, indexlist) {
   return arrayofarray.map(array => indexlist.map(idx => array[idx]));
@@ -89,20 +88,14 @@ const App = () => {
   };
 
   return (
-<div className="App">
-  <br></br>
-  <br></br>
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <img src={myImage} alt="SignMe Logo" />
-    <h2>SignMe</h2>
-    <img src={myImage} alt="SignMe Logo" />
-  </div>
-  {loading ? (
-    <div>
-      <Loader />
-      <p>Loading model...</p>
-    </div>
-  ) : (
+    <div className="App">
+      <h2>SignMe</h2>
+      {loading ? (
+        <div>
+          <Loader />
+          <p>Loading model...</p>
+        </div>
+      ) : (
     <>
       <div className="content">
         <video autoPlay playsInline muted ref={videoRef} id="frame"></video>
