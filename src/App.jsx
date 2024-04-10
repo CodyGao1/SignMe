@@ -96,6 +96,11 @@ const App = () => {
     };
   }, []);
 
+  // Function to clear the output text
+  const clearOutput = () => {
+    setOutputText('');
+  };
+
   return (
     <div className="App">
       <h2>SignMe</h2>
@@ -123,6 +128,9 @@ const App = () => {
         </button>
         <button onClick={() => setIsAdding(true)} className="control-button">
           Start Adding (S)
+        </button>
+        <button onClick={clearOutput} className="control-button">
+          Clear Output
         </button>
       </div>
       
