@@ -91,8 +91,6 @@ const App = () => {
     <div className="App">
       <br></br>
       <br></br>
-      <br></br>
-      <br></br>
       <p id="SignMeLogo">SignMe</p>
       {loading ? (
         <div>
