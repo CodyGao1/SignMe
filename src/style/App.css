@@ -121,3 +121,7 @@ p {
   align-items: center;
   z-index: 1000;
 }
+
+#SignMeLogo{
+  font-size: 100px;
+}
