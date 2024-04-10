@@ -1,3 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&display=swap');
+
+.App {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #9effbb;
+  font-family: 'Segoe UI', 'Helvetica Neue', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+}
+
+.App > .content {
+  position: relative;
+}
+
+.content > video {
+  width: 100%;
+  height: 100%;
+  max-width: 512px;
+  max-height: 512px;
+  border: 5px solid white;
+}
+
+.content > canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+h2,
+p {
+  font-size: 50px;
+  font-family: 'EB Garamond', serif;
+  margin-bottom: 20px;
+}
+
+.output-area {
+  background-color: transparent;
+  color: black;
+  font-size: 4em;
+  white-space: pre-wrap;
+  margin: 10px;
+  padding: 10px;
+  white-space: pre-wrap;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  transition: all 0.5s ease;
+}
+
+.clear-button {
+  background-color: black;
+  color: white;
+  font-size: 32px;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+  font-family: 'EB Garamond', serif;
+  width: 200px;
+  height: 100px;
+}
+
+.clear-button:hover {
+  background-color: #f0f0f0;
+}
+
+.slider-container {
+  margin: 20px 0;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.output-area.expanded {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 8em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#SignMeLogo{
+  font-size: 100px;
+}
+
 .control-button {
   background-color: black;
   color: white;
