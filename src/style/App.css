@@ -54,6 +54,7 @@ p {
 .clear-button {
   background-color: black;
   color: white;
+  font-size: 30px;
   border: none;
   padding: 10px 20px;
   font-size: 16px;
@@ -62,7 +63,7 @@ p {
   margin-top: 10px;
   font-family: 'EB Garamond', serif;
   width: 200px;
-  height: 100px;
+  height: 40px;
 }
 
 .clear-button:hover {
