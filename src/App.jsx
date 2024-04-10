@@ -22,7 +22,6 @@ const App = () => {
   const [updateInterval, setUpdateInterval] = useState(4); // State for the slider
   const [isAdding, setIsAdding] = useState(true); // State for adding values
   const [lettersList, setLettersList] = useState([]);
-  const [isExpanded, setIsExpanded] = useState(false); // State for expanded output area
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -97,28 +96,6 @@ const App = () => {
     };
   }, []);
 
-  const clearOutput = () => {
-    setOutputText('');
-    setLettersList([]);
-  };
-
-  const handleOutputAreaClick = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  const handleDocumentClick = (event) => {
-    if (!event.target.closest(".output-area")) {
-      setIsExpanded(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('click', handleDocumentClick);
-    return () => {
-      document.removeEventListener('click', handleDocumentClick);
-    };
-  }, []);
-
   return (
     <div className="App">
       <h2>SignMe</h2>
@@ -135,21 +112,17 @@ const App = () => {
       </div>
       
       <div 
-        className={`output-area ${isAdding ? '' : 'expanded'}`} 
-        onClick={handleOutputAreaClick}
+        className={`output-area ${isAdding ? '' : 'paused'}`} 
       >
         {outputText}
       </div>
-
+      
       <div className="controls">
         <button onClick={() => setIsAdding(false)} className="control-button">
           Stop Adding (Q)
         </button>
         <button onClick={() => setIsAdding(true)} className="control-button">
           Start Adding (S)
-        </button>
-        <button onClick={clearOutput} className="control-button clear-button">
-          Clear (C)
         </button>
       </div>
       
