@@ -6,7 +6,7 @@ import { Webcam } from "./utils/webcam";
 import { renderBoxes } from "./utils/renderBox";
 import { non_max_suppression } from "./utils/nonMaxSuppression";
 import "./style/App.css";
-import myImage from './SignMe_House_Of_Code_1.png';
+import myImage from './SignMe_House_Of_Code_2.png';
 
 function shortenedCol(arrayofarray, indexlist) {
   return arrayofarray.map(array => indexlist.map(idx => array[idx]));
