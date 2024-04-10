@@ -51,23 +51,6 @@ p {
   transition: all 0.5s ease;
 }
 
-.clear-button {
-  background-color: black;
-  color: white;
-  font-size: 32px;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-top: 10px;
-  font-family: 'EB Garamond', serif;
-  width: 200px;
-  height: 100px;
-}
-
-.clear-button:hover {
-  background-color: #f0f0f0;
-}
 
 .slider-container {
   margin: 20px 0;
