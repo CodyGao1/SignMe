@@ -20,7 +20,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
   const [updateInterval, setUpdateInterval] = useState(4); // State for the slider
-  const [isAdding, setIsAdding] = useState(false); // State for adding values
+  const [isAdding, setIsAdding] = useState(true); // State for adding values
   const [lettersList, setLettersList] = useState([]);
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
