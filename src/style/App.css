@@ -54,10 +54,9 @@ p {
 .clear-button {
   background-color: black;
   color: white;
-  font-size: 30px;
+  font-size: 32px;
   border: none;
   padding: 10px 20px;
-  font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
   margin-top: 10px;
