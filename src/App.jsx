@@ -21,6 +21,8 @@ const App = () => {
   const [outputText, setOutputText] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const [updateInterval, setUpdateInterval] = useState(4); // State for the slider
+  const [isAdding, setIsAdding] = useState(true); // State for adding values
+  const [lettersList, setLettersList] = useState([]);
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -70,21 +72,31 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (latestDetectionRef.current !== null) {
+      if (latestDetectionRef.current !== null && isAdding) {
         const newLetter = mapIdToLetter(latestDetectionRef.current);
         setOutputText(currentText => currentText + newLetter);
+        setLettersList(currentList => [...currentList, newLetter]);
         latestDetectionRef.current = null;
       }
     }, updateInterval * 500);
     return () => clearInterval(interval);
-  }, [updateInterval]);
+  }, [updateInterval, isAdding]);
 
   const clearOutput = () => {
     setOutputText('');
+    setLettersList([]);
   };
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const handleStartAdding = () => {
+    setIsAdding(true);
+  };
+
+  const handleStopAdding = () => {
+    setIsAdding(false);
   };
 
   return (
@@ -107,6 +119,18 @@ const App = () => {
         onClick={toggleExpand}
       >
         {outputText}
+      </div>
+      
+      <div className="controls">
+        <button onClick={handleStartAdding} className="control-button">
+          Start Adding (S)
+        </button>
+        <button onClick={handleStopAdding} className="control-button">
+          Stop Adding (Q)
+        </button>
+        <button onClick={clearOutput} className="control-button">
+          Clear (C)
+        </button>
       </div>
       
       <div className="slider-container">
