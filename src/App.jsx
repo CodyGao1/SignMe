@@ -88,48 +88,49 @@ const App = () => {
   };
 
   return (
-    <div className="App">
-      <br></br>
-      <br></br>
-    <span> <img src="src/utils/SignMe_House_Of_Code_1.png"> </img> </span> 
+<div className="App">
+  <br></br>
+  <br></br>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <img src="src/utils/SignMe_House_Of_Code_1.png" alt="SignMe Logo" />
     <h2>SignMe</h2>
-    <span> <img src="src/utils/SignMe_House_Of_Code_1.png"> </img> </span> 
-      {loading ? (
-        <div>
-          <Loader />
-          <p>Loading model...</p>
-        </div>
-      ) : (
-        <>
-          <div className="content">
-            <video autoPlay playsInline muted ref={videoRef} id="frame" />
-            <canvas width={512} height={512} ref={canvasRef} />
-          </div>
-          
-          <div 
-            className={`output-area ${isExpanded ? 'expanded' : ''}`} 
-            onClick={toggleExpand}
-          >
-            {outputText}
-          </div>
-          
-          <div className="slider-container">
-            <input 
-              type="range" 
-              min="1" 
-              max="10" 
-              value={updateInterval} 
-              onChange={(e) => setUpdateInterval(Number(e.target.value))} 
-              className="slider" 
-            />
-            <p>Update Interval: {updateInterval * 0.5} seconds</p>
-          </div>
-
-          {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
-        </>
-      )}
+    <img src="src/utils/SignMe_House_Of_Code_1.png" alt="SignMe Logo" />
+  </div>
+  {loading ? (
+    <div>
+      <Loader />
+      <p>Loading model...</p>
     </div>
-  );
-};
+  ) : (
+    <>
+      <div className="content">
+        <video autoPlay playsInline muted ref={videoRef} id="frame"></video>
+        <canvas width={512} height={512} ref={canvasRef}></canvas>
+      </div>
+      
+      <div 
+        className={`output-area ${isExpanded ? 'expanded' : ''}`} 
+        onClick={toggleExpand}
+      >
+        {outputText}
+      </div>
+      
+      <div className="slider-container">
+        <input 
+          type="range" 
+          min="1" 
+          max="10" 
+          value={updateInterval} 
+          onChange={(e) => setUpdateInterval(Number(e.target.value))} 
+          className="slider" 
+        />
+        <p>Update Interval: {updateInterval * 0.5} seconds</p>
+      </div>
+
+      {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
+    </>
+  )}
+</div>
+
 
 export default App;
