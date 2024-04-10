@@ -125,7 +125,7 @@ const App = () => {
             <p>Update Interval: {updateInterval * 0.5} seconds</p>
           </div>
 
-          {outputText && <button onClick={clearOutput} className="clear-button">YOU FUCKING BLIND BITCH</button>}
+          {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
         </>
       )}
     </div>
