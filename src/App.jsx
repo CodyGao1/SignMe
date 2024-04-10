@@ -91,9 +91,9 @@ const App = () => {
     <div className="App">
       <br></br>
       <br></br>
-    <span> <img src="src/SignMe_House_Of_Code_1.png"> </img> </span> 
-    <p id="src/SignMe_House_Of_Code_1.png">SignMe</p>
-    <span> <img src="SignMe_House_Of_Code_1.png"> </img> </span> 
+    <span> <img src="src/utils/SignMe_House_Of_Code_1.png"> </img> </span> 
+    <h2>SignMe</h2>
+    <span> <img src="src/utils/SignMe_House_Of_Code_1.png"> </img> </span> 
       {loading ? (
         <div>
           <Loader />
