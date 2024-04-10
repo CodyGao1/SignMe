@@ -96,6 +96,15 @@ const App = () => {
     };
   }, []);
 
+  const clearOutput = () => {
+    setOutputText('');
+    setLettersList([]);
+  };
+
+  const toggleExpand = () => {
+    setIsAdding(!isAdding);
+  };
+
   return (
     <div className="App">
       <h2>SignMe</h2>
@@ -112,17 +121,21 @@ const App = () => {
       </div>
       
       <div 
-        className={`output-area ${isAdding ? '' : 'paused'}`} 
+        className={`output-area ${isAdding ? '' : 'expanded'}`} 
+        onClick={toggleExpand}
       >
         {outputText}
       </div>
-      
+
       <div className="controls">
         <button onClick={() => setIsAdding(false)} className="control-button">
           Stop Adding (Q)
         </button>
         <button onClick={() => setIsAdding(true)} className="control-button">
           Start Adding (S)
+        </button>
+        <button onClick={clearOutput} className="control-button clear-button">
+          Clear (C)
         </button>
       </div>
       
