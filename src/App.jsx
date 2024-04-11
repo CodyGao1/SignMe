@@ -21,7 +21,6 @@ const App = () => {
   const [outputText, setOutputText] = useState('');
   const [updateInterval, setUpdateInterval] = useState(4); // State for the slider
   const [isAdding, setIsAdding] = useState(true); // State for adding values
-  const [isExpanded, setIsExpanded] = useState(false);
   const [lettersList, setLettersList] = useState([]);
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
@@ -82,15 +81,12 @@ const App = () => {
     return () => clearInterval(interval);
   }, [updateInterval, isAdding]);
 
-  
   const handleKeyDown = (event) => {
     if (event.key === 's' || event.key === 'S') {
       setIsAdding(true);
       clearOutput();
     } else if (event.key === 'q' || event.key === 'Q') {
       setIsAdding(false);
-    } else if (event.key === 'c' || event.key === 'C'){
-      clearOutput();
     }
   };
 
@@ -106,11 +102,6 @@ const App = () => {
     setOutputText('');
   };
 
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
-
-  
   return (
     <div className="App">
       <h2>SignMe</h2>
@@ -128,8 +119,6 @@ const App = () => {
       
       <div 
         className={`output-area ${isAdding ? '' : 'paused'}`} 
-        className={`output-area ${isExpanded ? 'expanded' : ''}`} 
-        onClick={toggleExpand}
       >
         {outputText}
       </div>
