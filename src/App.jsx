@@ -150,12 +150,6 @@ const App = () => {
               className="slider" 
             />
             <p>Update Interval: {updateInterval * 0.5} seconds</p>
-          </div>
-
-          {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
-        </>
-      )}
-    </div>
   );
 };
 
