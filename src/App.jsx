@@ -19,9 +19,9 @@ function mapIdToLetter(id) {
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [outputText, setOutputText] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
   const [updateInterval, setUpdateInterval] = useState(4); // State for the slider
   const [isAdding, setIsAdding] = useState(true); // State for adding values
-  const [lettersList, setLettersList] = useState([]);
   const latestDetectionRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -50,7 +50,7 @@ const App = () => {
     const class_detect = shortenedCol(detections, [5]);
 
     if (class_detect.length > 0 && class_detect[0][0] !== 25) {
-        latestDetectionRef.current = class_detect[0][0]; // Access the actual value, not the array
+        latestDetectionRef.current = class_detect[0][0];
     }
 
     renderBoxes(canvasRef, threshold, boxes, scores, class_detect);
@@ -74,12 +74,15 @@ const App = () => {
       if (latestDetectionRef.current !== null && isAdding) {
         const newLetter = mapIdToLetter(latestDetectionRef.current);
         setOutputText(currentText => currentText + newLetter);
-        setLettersList(currentList => [...currentList, newLetter]);
         latestDetectionRef.current = null;
       }
     }, updateInterval * 500);
     return () => clearInterval(interval);
   }, [updateInterval, isAdding]);
+
+  const clearOutput = () => {
+    setOutputText('');
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === 's' || event.key === 'S') {
@@ -87,6 +90,8 @@ const App = () => {
       clearOutput();
     } else if (event.key === 'q' || event.key === 'Q') {
       setIsAdding(false);
+    } else if (event.key === 'c' || event.key === 'C') {
+      clearOutput();
     }
   };
 
@@ -97,9 +102,8 @@ const App = () => {
     };
   }, []);
 
-  // Function to clear the output text
-  const clearOutput = () => {
-    setOutputText('');
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
   };
 
   return (
@@ -111,45 +115,48 @@ const App = () => {
           <p>Loading model...</p>
         </div>
       ) : (
-    <>
-      <div className="content">
-        <video autoPlay playsInline muted ref={videoRef} id="frame"></video>
-        <canvas width={512} height={512} ref={canvasRef}></canvas>
-      </div>
-      
-      <div 
-        className={`output-area ${isAdding ? '' : 'paused'}`} 
-      >
-        {outputText}
-      </div>
-      
-      <div className="controls">
-        <button onClick={() => setIsAdding(false)} className="control-button">
-          Stop Adding (Q)
-        </button>
-        <button onClick={() => setIsAdding(true)} className="control-button">
-          Start Adding (S)
-        </button>
-        <button onClick={clearOutput} className="control-button">
-          Clear Output
-        </button>
-      </div>
-      
-      <div className="slider-container">
-        <input 
-          type="range" 
-          min="1" 
-          max="10" 
-          value={updateInterval} 
-          onChange={(e) => setUpdateInterval(Number(e.target.value))} 
-          className="slider" 
-        />
-        <p>Update Interval: {updateInterval * 0.5} seconds</p>
-      </div>
-    </>
-  )}
-</div>
-);
+        <>
+          <div className="content">
+            <video autoPlay playsInline muted ref={videoRef} id="frame" />
+            <canvas width={512} height={512} ref={canvasRef} />
+          </div>
+          
+          <div 
+            className={`output-area ${isAdding ? '' : 'paused'} ${isExpanded ? 'expanded' : ''}`} 
+            onClick={toggleExpand}
+          >
+            {outputText}
+          </div>
+          
+          <div className="controls">
+            <button onClick={() => setIsAdding(false)} className="control-button">
+              Stop Adding (Q)
+            </button>
+            <button onClick={() => setIsAdding(true)} className="control-button">
+              Start Adding (S)
+            </button>
+            <button onClick={clearOutput} className="control-button">
+              Clear Output (C)
+            </button>
+          </div>
+          
+          <div className="slider-container">
+            <input 
+              type="range" 
+              min="1" 
+              max="10" 
+              value={updateInterval} 
+              onChange={(e) => setUpdateInterval(Number(e.target.value))} 
+              className="slider" 
+            />
+            <p>Update Interval: {updateInterval * 0.5} seconds</p>
+          </div>
+
+          {outputText && <button onClick={clearOutput} className="clear-button">Clear</button>}
+        </>
+      )}
+    </div>
+  );
 };
 
 export default App;
