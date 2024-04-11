@@ -89,6 +89,8 @@ const App = () => {
       clearOutput();
     } else if (event.key === 'q' || event.key === 'Q') {
       setIsAdding(false);
+    } else if (event.key === 'c' || event.key === 'C'){
+      clearOutput();
     }
   };
 
