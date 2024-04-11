@@ -150,6 +150,11 @@ const App = () => {
               className="slider" 
             />
             <p>Update Interval: {updateInterval * 0.5} seconds</p>
+
+            </div>
+        </>
+      )}
+    </div>
   );
 };
 
